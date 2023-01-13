@@ -1,12 +1,19 @@
 # MultiSSLscanner
 Create a new file with the extension .sh (e.g. "MultiSSL_scanner.sh") and paste the code into the file.
 
-Open a terminal in Kali Linux and navigate to the directory where you saved the script file.
+Open a terminal in Kali Linux and clone this repository 
+
+Navigate to the directory where you cloned the script file.
+
+
+````
+cd multisslscanner 
+````
 
 Make sure the script has execute permissions, if not you can run this command to give execute permissions to the file
 
 ````
-chmod +x ssl_scan.sh
+chmod +x MultiSSL_scanner.sh
 ````
 
 
