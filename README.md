@@ -10,7 +10,12 @@ chmod +x ssl_scan.sh
 ````
 
 
-Run the script by typing "./MultiSSL_scanner.sh" and pressing enter.
+Run the following script and press enter.
+
+```
+./MultiSSL_scanner.sh
+```
+
 
 The script will prompt the user for a domain name, enter the domain name to scan.
 
