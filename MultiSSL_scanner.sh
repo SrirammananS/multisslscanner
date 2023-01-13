@@ -21,6 +21,8 @@ tput setaf 2
 
 
 echo "MULTISSL SCANNER by Srirammanan"
+echo "This script will scan a domain using testssl, sslscan, and nmap"
+echo "Please enter the domain name, and options for testssl, sslscan and nmap"
 
 
 # Get URL from user input
@@ -41,10 +43,10 @@ if [[ ! $domain =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
   exit 1
 fi
 
-read -p "Enter the folder name for Report (Ex: Testpp_Toolsreport): " folder_name
+read -p "Enter the folder name for Reports: " folder_name
 read -p "Enter the options you want to pass to Testssl (Ex: -L) : " testssl_options
 read -p "Enter the options you want to pass to sslscan (Ex: --ssl2) : " sslscan_options
-read -p "Enter the options you want to pass to nmap (Ex: -Pn) :" nmap_options
+read -p "Enter the options you want to pass to nmap (Ex: --script ssl-* ) :" nmap_options
 mkdir $folder_name
 tput sgr0 
 
@@ -56,7 +58,7 @@ if [ -x "$(command -v testssl)" ]; then
     tput sgr0 
     testssl --htmlfile $folder_name/testsslReport.html $testssl_options $url
     echo ""
-    echo "testssl html report generated in same file path"
+    echo "testssl html report generated with name testsslReport"
 fi
 
 
@@ -72,7 +74,7 @@ tput setaf 3
     # Using sed command to convert sslscan report to html
     echo "$sslscan_output" | sed -e 's/\x1b\[[0-9;]*m//g' | awk '{print "<pre>" $0 "</pre>"}' > "$folder_name/SSLscanReport.html"
     echo ""
-    echo "sslscan html report generated with name $sslscan_report_name"
+    echo "sslscan html report generated with name SSLscanReport"
     
      
 fi
@@ -82,14 +84,14 @@ if [ -x "$(command -v nmap)" ]; then
 tput setaf 3
     echo "Running nmap on $domain..."
     tput sgr0 
-    nmap --script http-* --script ssl* $nmap_options "$domain" -oX "$folder_name/nmapReport.xml"
+    nmap -sV $nmap_options "$domain" -oX "$folder_name/nmapReport.xml"
     xsltproc "$folder_name/nmapReport.xml" -o "$folder_name/nmapReport.html"
     	if [ -f "$folder_name/nmapReport.xml" ]; then
     		rm "$folder_name/nmapReport.xml"
 	fi
 
     echo ""
-    echo "nmap html report generated"
+    echo "nmap html report generated with name nmapreport"
     echo ""
 fi
 
