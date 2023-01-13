@@ -1,36 +1,39 @@
 # MultiSSLscanner
 
-Open a terminal in Kali Linux and clone this repository 
+MULTISSL SCANNER is a bash script that automates the process of scanning a domain using testssl, sslscan, and nmap. The script will check if testssl, sslscan and nmap are installed on the system and install them if they are not found.
 
-Navigate to the directory where you cloned the script file.
+Prerequisites
+* testssl
+* sslscan
+* nmap
+
+**Installation**
+
+To install the script, simply clone or download the repository.
 
 
 ````
-cd multisslscanner 
+git clone https://github.com/srirammanan/multissl-scanner.git
+
 ````
+**Usage**
+
+To run the script, make it executable and run it.
 
 Make sure the script has execute permissions, if not you can run this command to give execute permissions to the file
 
 ````
-chmod +x MultiSSL_scanner.sh
+chmod +x multissl-scanner.sh
+./multissl-scanner.sh
+
 ````
+The script will prompt for the URL to scan and options for testssl, sslscan and nmap. The script will then extract the domain from the URL and validate it using a regular expression. The script will then run testssl, sslscan and nmap on the domain and generate HTML reports for each tool. The HTML reports will be saved in the folder name given by user.
 
+**Note**
 
-Run the following script and press enter.
+Reports will be stored in the folder name given by user
+Make sure to have xsltproc installed in your system.
 
-```
-./MultiSSL_scanner.sh
-```
+**License**
 
-
-The script will prompt the user for a domain name, enter the domain name to scan.
-
-The script will check if testssl.sh, sslscan, nmap are installed in the system and run the corresponding command.
-
-The script will provide the user with the results of each scan.
-
-You can also run the script by specifying the path of the script file
-
-Note: depending on your specific Kali Linux installation, you may need to use "sudo" to execute the script as a superuser.
-
-Happy pentesting
+This project is licensed under the MIT License 
