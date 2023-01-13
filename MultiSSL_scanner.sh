@@ -1,51 +1,96 @@
 #!/bin/bash
 
 # Check if testssl.sh and sslscan and nmap are installed
-if ! which testssl > /dev/null || ! which sslscan > /dev/null || ! which nmap > /dev/null; then
+if ! which testssl > /dev/null || ! which sslscan > /dev/null || ! which nmap > /dev/null || ! which figlet > /dev/null; then
   echo "Error: testssl or sslscan or nmap is not installed."
   echo "Installing testssl, sslscan, nmap"
   # install testssl, sslscan and nmap
-  apt-get install -y testssl sslscan nmap
+  apt-get install -y testssl sslscan nmap figlet
 fi
 
-# Get domain and report name from user input
-read -p "Enter the domain to scan: " domain
-read -p "Enter the report name for sslscan: " sslscan_report_name
-read -p "Enter the report name for nmap: " nmap_report_name
 
-# Add fancy signature
-echo "Starting the scan with MULTISSL SCANNER by Srirammanan"
-echo " __  __       _ _   _  _____ _____ _"   
-echo "|  \/  |     | | | (_)/ ____/ ____| |"   
-echo "| \  / |_   _| | |_ _| (___| (___ | |"  
-echo "| |\/| | | | | | __| |\___ ||___ \| |"
-echo "| |  | | |_| | | |_| |____) ____) | |____ "
-echo "|_|  |_|\__,_|_|\__|_|_____|_____/|______|"
+# Install figlet if not already installed
+if ! which figlet > /dev/null; then
+  apt-get install -y figlet
+fi
 
-# Run testssl.sh on the domain
+# Display signature
+tput setaf 3
+figlet "MULTISSL SCANNER"
+tput setaf 2
+
+
+echo "MULTISSL SCANNER by Srirammanan"
+
+
+# Get URL from user input
+tput sgr0 
+read -p "Enter the URL to scan: " url
+
+# Extract domain name from URL
+domain=$(echo $url | awk -F/ '{print $3}')
+tput setaf 4
+echo "The given URL:$url"
+
+
+# Validate the domain using a regular expression
+echo "The given domain: $domain Note: SSLSCAN and NMAP scan will take domain as input"
+tput sgr0 
+if [[ ! $domain =~ ^[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$ ]]; then
+  echo "Error: Invalid domain name." >&2
+  exit 1
+fi
+
+read -p "Enter the folder name for Report (Ex: Testpp_Toolsreport): " folder_name
+read -p "Enter the options you want to pass to Testssl (Ex: -L) : " testssl_options
+read -p "Enter the options you want to pass to sslscan (Ex: --ssl2) : " sslscan_options
+read -p "Enter the options you want to pass to nmap (Ex: -Pn) :" nmap_options
+mkdir $folder_name
+tput sgr0 
+
+# testssl  
 if [ -x "$(command -v testssl)" ]; then
-    echo "Running testssl on $domain..."
-    testssl --html "$domain" 
-    echo "testssl html report generated in same file path"
+    tput setaf 3
     echo ""
+    echo "Running testssl on $url..."
+    tput sgr0 
+    testssl --htmlfile $folder_name/testsslReport.html $testssl_options $url
+    echo ""
+    echo "testssl html report generated in same file path"
 fi
 
-# Run sslscan on the domain
+
+#   sslscan  
 if [ -x "$(command -v sslscan)" ]; then
+tput setaf 3
     echo "Running sslscan on $domain..."
-    sslscan "$domain" 
-    echo "sslscan report generated"
+    tput sgr0 
+    sslscan_output=$(sslscan $sslscan_options $domain)
+    echo "$sslscan_output"
     echo ""
     echo "Converting the report to html"
     # Using sed command to convert sslscan report to html
-    sslscan "$domain" | sed -e 's/\x1b\[[0-9;]*m//g' | awk '{print "<pre>" $0 "</pre>"}' > "$sslscan_report_name"
-    echo "sslscan html report generated in same file path"
+    echo "$sslscan_output" | sed -e 's/\x1b\[[0-9;]*m//g' | awk '{print "<pre>" $0 "</pre>"}' > "$folder_name/SSLscanReport.html"
+    echo ""
+    echo "sslscan html report generated with name $sslscan_report_name"
+    
+     
 fi
 
-# Run nmap on the domain
+#   nmap  
 if [ -x "$(command -v nmap)" ]; then
+tput setaf 3
     echo "Running nmap on $domain..."
-    nmap --script http-* --script ssl-* -sV "$domain" -oA "$domain" 
-    xsltproc "$nmap_report_name.xml" -o "$nmap_report_name.html"
+    tput sgr0 
+    nmap --script http-* --script ssl* $nmap_options "$domain" -oX "$folder_name/nmapReport.xml"
+    xsltproc "$folder_name/nmapReport.xml" -o "$folder_name/nmapReport.html"
+    	if [ -f "$folder_name/nmapReport.xml" ]; then
+    		rm "$folder_name/nmapReport.xml"
+	fi
+
+    echo ""
     echo "nmap html report generated"
+    echo ""
 fi
+
+
