@@ -23,7 +23,7 @@ To install the script, simply clone or download the repository.
 
 
 ````
-git clone https://github.com/srirammanan/multissl-scanner.git
+git clone https://github.com/SrirammananS/multisslscanner.git
 
 ````
 **Usage**
@@ -33,7 +33,8 @@ To run the script, make it executable and run it.
 Make sure the script has execute permissions, if not you can run this command to give execute permissions to the file
 
 ````
-chmod +x multissl-scanner.sh
+cd multisslscanner 
+chmod +x MultiSSL_Scanner 
 ./Multissl_Scanner
 
 ````
